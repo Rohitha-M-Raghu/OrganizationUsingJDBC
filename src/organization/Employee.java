@@ -18,7 +18,16 @@ public class Employee {
 		this.empName = name;
 		this.deptId = deptId;
 		this.salary = salary;
+		this.managerId = 0;
 		this.subordinatesId = new ArrayList<>();
+	}
+	
+	public Employee(Integer empId, String empName, String deptId, float salary, Integer managerId) {
+		this.empId = empId;
+		this.empName = empName;
+		this.deptId = deptId;
+		this.salary = salary;
+		this.managerId = managerId;
 	}
 	
 	public static int getNoOfEmployees() {

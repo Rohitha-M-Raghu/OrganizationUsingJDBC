@@ -2,14 +2,16 @@ package ui;
 
 import java.util.Scanner;
 
+import database.OrganizationDataBase;
 import organization.OrganizationTree;
 
 public class MainMenu {
 	private static OrganizationTree organizationTree = new OrganizationTree();
 	private static Scanner scanner = new Scanner(System.in);
 	public static void main(String[] args) {
+		new OrganizationDataBase();
 		int choice = 0;
-		while(choice != 5) {
+		while(choice != 6) {
 			displayMenu();
 			System.out.print("Enter your choice: ");
 			choice = scanner.nextInt();
@@ -19,7 +21,7 @@ public class MainMenu {
 					addEmployee();
 					break;
 				case 2:
-					displayEmployeeData();
+					displayEmployeeDetails();
 					break;
 				case 3:
 					createDepartment();
@@ -28,7 +30,11 @@ public class MainMenu {
 					displayDepartmentDetails();
 					break;
 				case 5:
+					assignHOD();
+					break;
+				case 6:
 					System.out.println("Exiting Application...");
+					break;
 				default:
 					System.out.println("Wrong Input... Try Again");
 				}
@@ -46,31 +52,45 @@ public class MainMenu {
 		System.out.println("2. Display EmployeeDetails");
 		System.out.println("3. Create New Department");
 		System.out.println("4. Display Department Details");
+		System.out.println("5. Assign Head Of Department");
+		System.out.println("6. Exit");
 	}
 	
 	public static void addEmployee() {
+		scanner.nextLine(); // consume the remaining newline character
 		System.out.print("Enter Employee Name: ");
-		String name = scanner.next();
-		System.out.println("Enter Department Name: ");
-		String deptId = scanner.next();
-		System.out.println("Enter Salary: ");
+		String name = scanner.nextLine();
+		System.out.print("Enter Department ID: ");
+		String deptId = scanner.nextLine();
+		System.out.print("Enter Salary: ");
 		float salary = scanner.nextFloat();
 		organizationTree.addEmployee(name, deptId, salary);
 	}
 	
-	public static void displayEmployeeData() {
-		
-	}
 	
 	public static void createDepartment() {
 		System.out.print("DepartmentID: ");
 		String deptID = scanner.next();
+		scanner.nextLine(); // consume the remaining newline character
 		System.out.print("Department Name: ");
-		String deptName = scanner.next();
+		String deptName = scanner.nextLine();
 		organizationTree.addDepartment(deptID, deptName);
 	}
 	
 	public static void displayDepartmentDetails() {
-		//TODO
+		organizationTree.displayDepartmentData();
+	}
+	
+	public static void displayEmployeeDetails() {
+		organizationTree.displayEmployeeData();
+	}
+	
+	public static void assignHOD() {
+		System.out.print("Enter Department ID: ");
+		String deptId = scanner.next();
+		scanner.nextLine();
+		System.out.print("Enter HOD name: ");
+		String headName = scanner.nextLine();
+		organizationTree.assignHeadOfDepartment(deptId, headName);
 	}
 }

@@ -1,6 +1,13 @@
 package database;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import exceptions.DepartmentNotFound;
+import organization.Department;
+import organization.Employee;
 
 public class OrganizationDataBase {
 	private static String url = "jdbc:mysql://localhost:3306/Organization";
@@ -14,7 +21,7 @@ public class OrganizationDataBase {
 	private static Statement stmt = null;
 	private static ResultSet res = null;
 	
-	public OrganizationDataBase() {
+	static {
 		try {
 			//Registering JDBC 
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -69,22 +76,94 @@ public class OrganizationDataBase {
 		}
 	}
 	
-	public static void addEmployeeData() {
-		
-	}
-	
-	public void createTable(String tableName) {
+	public static void addEmployeeData(String empName, String deptID, float salary) {
 		try {
-			pstmt = conn.prepareStatement("CREATE TABLE ?");
-			pstmt.setString(1, tableName);
-			pstmt.executeUpdate();
-			System.out.println("Creating Table " + tableName);
-			System.out.println("");
-			
-		} catch (SQLException e) {
-
-			e.printStackTrace();
+			try {
+				cstmt = conn.prepareCall("{CALL insert_employee(?, ?, ?)}");
+				cstmt.setString(1, empName);
+				cstmt.setString(2, deptID);
+				cstmt.setFloat(3, salary);
+				cstmt.executeUpdate();
+				System.out.println("New Employee Added to Employee Table...");
+			}catch (SQLException se) {
+				//System.err.println("Department " + deptID + " doesn't exist");
+				throw new DepartmentNotFound();
+			}
+		}catch (DepartmentNotFound de) {
+			System.err.println(de.getMessage());
 		}
 	}
+	
+	public static List<Department> getDepartmentData() {
+		try {
+			query = "SELECT * FROM Department";
+			res = stmt.executeQuery(query);
+			List<Department> departmentData = new ArrayList<>();
+			while(res.next()) {
+				String deptId = res.getString("deptID");
+				String deptName = res.getString("deptName");
+				String deptHead = res.getString("deptHead");
+				int noOfEmployees = res.getInt("no_of_employees");
+				departmentData.add(new Department(deptId, deptName, deptHead, noOfEmployees));
+			}
+			return departmentData;
+		}catch (SQLException se) {
+			se.printStackTrace();
+		}
+		return Collections.emptyList();
+	}
+	
+	public static List<Employee> getEmployeeData(){
+		try {
+			query = "SELECT * FROM Employee";
+			res = stmt.executeQuery(query);
+			List<Employee> employeeData = new ArrayList<>();
+			while(res.next()) {
+				Integer empId = res.getInt("empID");
+				String empName = res.getString("empName");
+				String deptId = res.getString("deptID");
+				float salary = res.getFloat("salary");
+				Integer managerId = res.getInt("managerID");
+				employeeData.add(new Employee(empId, empName, deptId, salary, managerId));
+			}
+			return employeeData;
+		}catch (SQLException se) {
+			System.err.println(se.getMessage());
+		}
+		return Collections.emptyList();
+	}
+	
+	public static boolean setHeadOfDepartment(String deptId, String headName) {
+		try {
+			query = "UPDATE Department SET deptHead = ? WHERE deptID = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, headName);
+			pstmt.setString(2, deptId);
+			pstmt.executeUpdate();
+			return true;
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
+		}
+	}
+	
+	public static boolean isEmployeeExists(String name) {
+	    try {
+	        query = "SELECT COUNT(*) FROM Employee WHERE empName = ?";
+	        pstmt = conn.prepareStatement(query);
+	        pstmt.setString(1, name);
+	        res = pstmt.executeQuery();
+	        if (res.next()) {
+	            int count = res.getInt(1);
+	            return count > 0;
+	        }
+	    } catch (SQLException se) {
+	        System.out.println(se.getMessage());
+	    }
+	    return false;
+	}
+
+	
+	
 	
 }
