@@ -2,14 +2,13 @@ package ui;
 
 import java.util.Scanner;
 
-import database.OrganizationDataBase;
 import organization.OrganizationTree;
 
 public class MainMenu {
 	private static OrganizationTree organizationTree = new OrganizationTree();
 	private static Scanner scanner = new Scanner(System.in);
 	public static void main(String[] args) {
-		new OrganizationDataBase();
+		//new OrganizationDataBase();
 		int choice = 0;
 		while(choice != 6) {
 			displayMenu();
@@ -33,6 +32,7 @@ public class MainMenu {
 					assignHOD();
 					break;
 				case 6:
+					organizationTree.closeDatabase();
 					System.out.println("Exiting Application...");
 					break;
 				default:

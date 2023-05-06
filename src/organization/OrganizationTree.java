@@ -14,6 +14,7 @@ public class OrganizationTree {
 	//private OrganizationDataBase organizationDB = new OrganizationDataBase();
 	
 	public OrganizationTree() {
+		new OrganizationDataBase();
 		topEmployee = "noname";
 		employee = new HashMap<>();
 		manager = new HashMap<>();
@@ -87,7 +88,10 @@ public class OrganizationTree {
 				System.out.println("Deptartment ID doesn't exist");
 			}
 		}
-		
+	}
+	
+	public void closeDatabase() {
+		OrganizationDataBase.closeResources();
 	}
 	
 }

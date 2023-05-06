@@ -166,7 +166,29 @@ public class OrganizationDataBase {
 	    return false;
 	}
 
-	
+	public static void closeResources() {
+		System.out.println("Closing all Resources...");
+		try {
+			if(res != null) {
+				res.close();
+			}
+			if(pstmt != null) {
+				pstmt.close();
+			}
+			if(stmt != null) {
+				stmt.close();
+			}
+			if(cstmt != null) {
+				cstmt.close();
+			}
+			if(conn != null) {
+				conn.close();
+			}
+			System.out.println("Database Disconnected...");
+		}catch (SQLException se) {
+			se.printStackTrace();
+		}
+	}
 	
 	
 }
