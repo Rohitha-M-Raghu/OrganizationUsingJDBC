@@ -78,19 +78,22 @@ public class OrganizationDataBase {
 	
 	public static void addEmployeeData(String empName, String deptID, float salary) {
 		try {
+			cstmt = conn.prepareCall("{CALL insert_employee(?, ?, ?)}");
+			cstmt.setString(1, empName);
+			cstmt.setString(2, deptID);
+			cstmt.setFloat(3, salary);
 			try {
-				cstmt = conn.prepareCall("{CALL insert_employee(?, ?, ?)}");
-				cstmt.setString(1, empName);
-				cstmt.setString(2, deptID);
-				cstmt.setFloat(3, salary);
 				cstmt.executeUpdate();
-				System.out.println("New Employee Added to Employee Table...");
-			}catch (SQLException se) {
-				//System.err.println("Department " + deptID + " doesn't exist");
+			}catch (SQLException e) {
 				throw new DepartmentNotFound();
 			}
+			System.out.println("New Employee Added to Employee Table...");
+			
 		}catch (DepartmentNotFound de) {
 			System.err.println(de.getMessage());
+		}
+		catch (SQLException se) {
+			System.err.println(se.getMessage());
 		}
 	}
 	
