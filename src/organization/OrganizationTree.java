@@ -34,7 +34,7 @@ public class OrganizationTree {
 			}
 			employeeMap.put(emp.getEmpId(), name);
 		}
-		displayEmployeeMap(); //remove
+//		displayEmployeeMap(); //remove
 	}
 	
 	//checking function
@@ -136,6 +136,20 @@ public class OrganizationTree {
 		}catch (EmployeeNotFound e) {
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	public void departmentSalaryUpgrade(String deptId, float upgradePercentage) {
+		try {
+			if(!OrganizationDataBase.isDepartmentExists(deptId)) {
+				throw new DepartmentNotFound(deptId);
+			}
+			else {
+				OrganizationDataBase.departmentSalaryUpraisal(deptId, upgradePercentage);
+			}
+		}catch (DepartmentNotFound de) {
+			System.err.println(de.getMessage());
+		}
+		
 	}
 	
 }

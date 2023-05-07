@@ -200,11 +200,47 @@ public class OrganizationDataBase {
 		}
 	}
 	
+	public static void departmentSalaryUpraisal(String deptId, float salaryUpgradePercentage) {
+	    query = "SELECT * FROM Employee WHERE deptID = ?";
+	    try {
+	        pstmt = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+	        pstmt.setString(1, deptId);
+	        res = pstmt.executeQuery();
+	        while(res.next()) {
+	            float salary = res.getFloat("salary");
+	            salary = (float) (salary * (1 + salaryUpgradePercentage*0.01));
+	            res.updateFloat("salary", salary);
+	            res.updateRow(); //changes saved to Database
+	        }
+	        System.out.println("Salaries of Employees in Department " + deptId + " updated successfully...");
+	    } catch (SQLException se) {
+	        System.err.println(se.getMessage());
+	    }
+	}
+
+	
 	public static boolean isEmployeeExists(String name) {
 	    try {
 	        query = "SELECT COUNT(*) FROM Employee WHERE empName = ?";
 	        pstmt = conn.prepareStatement(query);
 	        pstmt.setString(1, name);
+	        res = pstmt.executeQuery();
+	        if (res.next()) {
+	            int count = res.getInt(1);
+	            return count > 0;
+	        }
+	    } catch (SQLException se) {
+//	    	System.out.println("EXCEPTION IN isEmployeeExists");
+	        System.out.println(se.getMessage());
+	    }
+	    return false;
+	}
+	
+	public static boolean isDepartmentExists(String deptId) {
+	    try {
+	        query = "SELECT COUNT(*) FROM Department WHERE deptID = ?";
+	        pstmt = conn.prepareStatement(query);
+	        pstmt.setString(1, deptId);
 	        res = pstmt.executeQuery();
 	        if (res.next()) {
 	            int count = res.getInt(1);

@@ -15,7 +15,7 @@ public class MainMenu {
 	public static void main(String[] args) {
 		//new OrganizationDataBase();
 		int choice = 0;
-		while(choice != 7) {
+		while(choice != 8) {
 			displayMenu();
 			System.out.print("Enter your choice: ");
 			choice = scanner.nextInt();
@@ -40,6 +40,9 @@ public class MainMenu {
 					assignHOD();
 					break;
 				case 7:
+					salaryUpraisal();
+					break;
+				case 8:
 					organizationTree.closeDatabase();
 					System.out.println("Exiting Application...");
 					break;
@@ -54,7 +57,7 @@ public class MainMenu {
 	}
 	
 	public static void displayMenu() {
-		System.out.println("MENU");
+		System.out.println("\nMENU");
 		System.out.println("================");
 		System.out.println("1. Add Employee");
 		System.out.println("2. Edit Employee Data");
@@ -62,7 +65,8 @@ public class MainMenu {
 		System.out.println("4. Create New Department");
 		System.out.println("5. Display All Department Details");
 		System.out.println("6. Assign Head Of Department");
-		System.out.println("7. Exit");
+		System.out.println("7. Salary Upraisal for Department");
+		System.out.println("8. Exit");
 		System.out.println("");
 		
 	}
@@ -75,7 +79,9 @@ public class MainMenu {
 		String deptId = scanner.nextLine();
 		System.out.print("Enter Salary: ");
 		float salary = scanner.nextFloat();
-		organizationTree.addEmployee(name, deptId, salary);
+		if(OrganizationDataBase.isDepartmentExists(deptId)) {
+			organizationTree.addEmployee(name, deptId, salary);
+		}
 	}
 	
 	
@@ -120,5 +126,13 @@ public class MainMenu {
 			System.err.println("Invalid Employee Data Field...");
 			System.err.println("TRY AGAIN...");
 		}
+	}
+	
+	public static void salaryUpraisal() {
+		System.out.print("Enter Department ID: ");
+		String deptId = scanner.next();
+		System.out.print("Enter Percentage Upraisal(in %): ");
+		float upgradePercentage = scanner.nextFloat();
+		organizationTree.departmentSalaryUpgrade(deptId, upgradePercentage);
 	}
 }
