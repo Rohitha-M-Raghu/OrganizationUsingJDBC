@@ -10,9 +10,9 @@ import organization.Department;
 import organization.Employee;
 
 public class OrganizationDataBase implements DatabaseAccess, DatabaseManipulation{
-	private static String url = "jdbc:mysql://localhost:3306/Organization";
-	private static String userName = "root";
-	private static String password = "";
+	private final String url = "jdbc:mysql://localhost:3306/Organization";
+	private final String userName = "root";
+	private final String password = "";
 	private static String query = "";
 	private static PreparedStatement pstmt = null;
 	private static CallableStatement cstmt = null;
