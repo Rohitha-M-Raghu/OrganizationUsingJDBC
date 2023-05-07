@@ -1,0 +1,63 @@
+USE Organization;
+
+# Creation of Department Table
+CREATE TABLE Department
+(
+	deptID VARCHAR(255) PRIMARY KEY,
+	deptName VARCHAR(255) UNIQUE KEY,
+	deptHead VARCHAR(255) DEFAULT 'Not Assigned',
+	no_of_employees INT DEFAULT 0
+);
+
+# Creation of Management Table
+CREATE TABLE Manager
+(
+	managerID INT PRIMARY KEY,
+	deptName VARCHAR(255),
+	no_of_employees INT DEFAULT 1,
+	FOREIGN KEY (deptName) REFERENCES Department(deptName) ON DELETE CASCADE 
+);
+
+#Creation of Employee Table
+CREATE TABLE Employee
+(
+	empID INT PRIMARY KEY AUTO_INCREMENT,
+	empName VARCHAR(255) NOT NULL,
+	deptID VARCHAR(255) NOT NULL,
+	salary FLOAT,
+	managerID INT DEFAULT NULL,
+	FOREIGN KEY (deptID) REFERENCES Department(deptID),
+	FOREIGN KEY (managerID) REFERENCES Manager(managerID)
+);
+
+# Procedure for Inserting depID and deptName into Department table
+CREATE PROCEDURE insert_department(
+    IN p_deptID VARCHAR(255),
+    IN p_deptName VARCHAR(255)
+)
+BEGIN
+    INSERT INTO Department (deptID, deptName)
+    VALUES (p_deptID, p_deptName);
+END
+
+
+# Procedure for Inserting empName, depID and salary into Employee table
+CREATE PROCEDURE insert_employee(
+    IN p_empName VARCHAR(255),
+    IN p_deptID VARCHAR(255),
+    IN p_salary FLOAT
+)
+BEGIN
+    INSERT INTO Employee (empName, deptID, salary)
+    VALUES (p_empName, p_deptID, p_salary);
+END
+
+#Drop Procedure
+DROP PROCEDURE IF EXISTS insert_employee;
+
+#Trigger to increment no_of_employees every time an employee is registered
+CREATE TRIGGER increment_no_of_employees AFTER INSERT ON Employee
+FOR EACH ROW
+BEGIN
+    UPDATE Department SET no_of_employees = no_of_employees + 1 WHERE deptID = NEW.deptID;
+END;
