@@ -4,7 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 
 import exceptions.DepartmentNotFound;
 import organization.Department;
@@ -22,9 +21,7 @@ public class OrganizationDataBase {
 	private static Statement stmt = null;
 	private static ResultSet res = null;
 	
-	private static Scanner scanner = new Scanner(System.in);
-	
-	static {
+	public OrganizationDataBase() {
 		try {
 			//Registering JDBC 
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -48,7 +45,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
-	public static void truncateTables() {
+	public void truncateTables() {
 	    try {
 	    	// Disable foreign key checks
 	        stmt.executeUpdate("SET FOREIGN_KEY_CHECKS=0");
@@ -67,7 +64,7 @@ public class OrganizationDataBase {
 	    }
 	}
 
-	public static void addDepartmentData(String deptID, String deptName) {
+	public void addDepartmentData(String deptID, String deptName) {
 		try {
 			cstmt = conn.prepareCall("{CALL insert_department(?, ?)}");
 			cstmt.setString(1, deptID);
@@ -79,7 +76,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
-	public static Integer addEmployeeData(String empName, String deptID, float salary) {
+	public Integer addEmployeeData(String empName, String deptID, float salary) {
 		try {
 			cstmt = conn.prepareCall("{CALL insert_employee(?, ?, ?)}");
 			cstmt.setString(1, empName);
@@ -105,7 +102,7 @@ public class OrganizationDataBase {
 		return -1;
 	}
 	
-	public static Integer getEmployeeID(String empName) {
+	public Integer getEmployeeID(String empName) {
 	    query = "SELECT empID FROM Employee WHERE empName = ?";
 	    try {
 	        pstmt = conn.prepareStatement(query);
@@ -121,7 +118,7 @@ public class OrganizationDataBase {
 	    return null;
 	}
 	
-	public static List<Department> getAllDepartmentData() {
+	public List<Department> getAllDepartmentData() {
 		try {
 			query = "SELECT * FROM Department";
 			res = stmt.executeQuery(query);
@@ -140,7 +137,7 @@ public class OrganizationDataBase {
 		return Collections.emptyList();
 	}
 	
-	public static List<Employee> getAllEmployeeData(){
+	public List<Employee> getAllEmployeeData(){
 		try {
 			query = "SELECT * FROM Employee";
 			res = stmt.executeQuery(query);
@@ -160,7 +157,7 @@ public class OrganizationDataBase {
 		return Collections.emptyList();
 	}
 	
-	public static boolean setHeadOfDepartment(String deptId, String headName) {
+	public boolean setHeadOfDepartment(String deptId, String headName) {
 		try {
 			query = "UPDATE Department SET deptHead = ? WHERE deptID = ?";
 			pstmt = conn.prepareStatement(query);
@@ -174,7 +171,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
-	public static void updateEmployeeSalary(Integer empId, float salary) {
+	public void updateEmployeeSalary(Integer empId, float salary) {
 		query = "UPDATE Employee SET salary = ? WHERE empID = ?";
 		try {
 			pstmt = conn.prepareStatement(query);
@@ -187,7 +184,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
-	public static void updateEmployeeName(Integer empId, String newName) {
+	public void updateEmployeeName(Integer empId, String newName) {
 		query = "UPDATE Employee SET empName = ? WHERE empID = ?";
 		try {
 			pstmt = conn.prepareStatement(query);
@@ -200,7 +197,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
-	public static void departmentSalaryUpraisal(String deptId, float salaryUpgradePercentage) {
+	public void departmentSalaryUpraisal(String deptId, float salaryUpgradePercentage) {
 	    query = "SELECT * FROM Employee WHERE deptID = ?";
 	    try {
 	        pstmt = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -219,7 +216,7 @@ public class OrganizationDataBase {
 	}
 
 	
-	public static boolean isEmployeeExists(String name) {
+	public boolean isEmployeeExists(String name) {
 	    try {
 	        query = "SELECT COUNT(*) FROM Employee WHERE empName = ?";
 	        pstmt = conn.prepareStatement(query);
@@ -236,7 +233,7 @@ public class OrganizationDataBase {
 	    return false;
 	}
 	
-	public static boolean isDepartmentExists(String deptId) {
+	public boolean isDepartmentExists(String deptId) {
 	    try {
 	        query = "SELECT COUNT(*) FROM Department WHERE deptID = ?";
 	        pstmt = conn.prepareStatement(query);
@@ -253,7 +250,7 @@ public class OrganizationDataBase {
 	    return false;
 	}
 
-	public static void closeResources() {
+	public void closeResources() {
 		System.out.println("Closing all Resources...");
 		try {
 			if(res != null) {

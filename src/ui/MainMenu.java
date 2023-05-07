@@ -79,7 +79,7 @@ public class MainMenu {
 		String deptId = scanner.nextLine();
 		System.out.print("Enter Salary: ");
 		float salary = scanner.nextFloat();
-		if(OrganizationDataBase.isDepartmentExists(deptId)) {
+		if(organizationTree.checkValidDeptID(deptId)) {
 			organizationTree.addEmployee(name, deptId, salary);
 		}
 	}

@@ -15,11 +15,11 @@ public class OrganizationTree {
 	private Map<Integer, String> employeeMap; // empID mapped to empName
 	private Map<Integer, List<Integer>> managerMap; // managerID mapped to subordinateIDs
 	//private OrganizationDataBase organizationDB = new OrganizationDataBase();
-	
+	private OrganizationDataBase organizationDB;
 	private static Scanner scanner = new Scanner(System.in);
 		
 	public OrganizationTree() {
-		new OrganizationDataBase();
+		organizationDB = new OrganizationDataBase();
 		topEmployee = "noname";
 		employeeMap = new HashMap<>();
 		managerMap = new HashMap<>();
@@ -27,7 +27,7 @@ public class OrganizationTree {
 	
 	public void addEmployee(String name, String deptId, float salary) {
 		Employee emp = new Employee(name, deptId, salary);
-		emp.setEmpId(OrganizationDataBase.addEmployeeData(name, deptId, salary));
+		emp.setEmpId(organizationDB.addEmployeeData(name, deptId, salary));
 		if(emp.getEmpId()!= null) {
 			if(topEmployee.equals("noname")) {
 				topEmployee = name;
@@ -48,7 +48,7 @@ public class OrganizationTree {
 	
 	public void addDepartment(String deptId, String deptName) {
 		Department dept = new Department(deptId, deptName); // is this necessary
-		OrganizationDataBase.addDepartmentData(dept.getDeptId(), dept.getDeptName());
+		organizationDB.addDepartmentData(dept.getDeptId(), dept.getDeptName());
 	}
 	
 	
@@ -57,7 +57,7 @@ public class OrganizationTree {
 		System.out.println("DEPARTMENT ID \t\tDEPARTMENT NAME \t\tHEAD OF DEPARTMENT\t\tNO OF EMPLOYEES");
 		System.out.print("----------------------------------------------------");
 		System.out.println("---------------------------------------------------");
-		List<Department> departmentData = OrganizationDataBase.getAllDepartmentData();
+		List<Department> departmentData = organizationDB.getAllDepartmentData();
 		if(departmentData.isEmpty()) {
 			System.err.println("Empty Data Set.....");
 			return;
@@ -76,7 +76,7 @@ public class OrganizationTree {
 		System.out.println("EMP ID\t\tEMP NAME\t\tDEPT ID\t\tSALARY\t\tMANAGER ID");
 		System.out.print("---------------------------------------------");
 		System.out.println("-------------------------------------");
-		List<Employee> employeeData = OrganizationDataBase.getAllEmployeeData();
+		List<Employee> employeeData = organizationDB.getAllEmployeeData();
 		if(employeeData.isEmpty()) {
 			System.err.println("Emplty Data Set.....");
 			return;
@@ -97,12 +97,12 @@ public class OrganizationTree {
 	
 	public void assignHeadOfDepartment(String deptId, String headName) {
 		//checking whether HOD is a registered emp or not
-		if(!OrganizationDataBase.isEmployeeExists(headName)) {
+		if(!organizationDB.isEmployeeExists(headName)) {
 			System.out.println(headName + "is not an employee of this organization");
 			System.out.println("TRY AGAIN...");
 		}
 		else {
-			if(OrganizationDataBase.setHeadOfDepartment(deptId, headName)) {
+			if(organizationDB.setHeadOfDepartment(deptId, headName)) {
 				System.out.println("Successfully Updated...");
 			}
 			else {
@@ -112,7 +112,7 @@ public class OrganizationTree {
 	}
 	
 	public void closeDatabase() {
-		OrganizationDataBase.closeResources();
+		organizationDB.closeResources();
 	}
 	
 	public void modifyEmployeeData(Integer empId, EmployeeColumn columnName) {
@@ -124,13 +124,13 @@ public class OrganizationTree {
 				if(columnName.equals(EmployeeColumn.EMPNAME)) {
 					System.out.print("Enter Employee Name(for updation): ");
 					String name = scanner.nextLine();
-					OrganizationDataBase.updateEmployeeName(empId, name);
+					organizationDB.updateEmployeeName(empId, name);
 					employeeMap.put(empId, name);
 				}
 				else {
 					System.out.print("Enter new Salary: ");
 					float salary = scanner.nextFloat();
-					OrganizationDataBase.updateEmployeeSalary(empId, salary);
+					organizationDB.updateEmployeeSalary(empId, salary);
 				}
 			}
 		}catch (EmployeeNotFound e) {
@@ -140,16 +140,20 @@ public class OrganizationTree {
 	
 	public void departmentSalaryUpgrade(String deptId, float upgradePercentage) {
 		try {
-			if(!OrganizationDataBase.isDepartmentExists(deptId)) {
+			if(!organizationDB.isDepartmentExists(deptId)) {
 				throw new DepartmentNotFound(deptId);
 			}
 			else {
-				OrganizationDataBase.departmentSalaryUpraisal(deptId, upgradePercentage);
+				organizationDB.departmentSalaryUpraisal(deptId, upgradePercentage);
 			}
 		}catch (DepartmentNotFound de) {
 			System.err.println(de.getMessage());
 		}
 		
+	}
+	
+	public boolean checkValidDeptID(String deptId) {
+		return organizationDB.isDepartmentExists(deptId);
 	}
 	
 }
