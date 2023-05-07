@@ -9,7 +9,7 @@ import exceptions.DepartmentNotFound;
 import organization.Department;
 import organization.Employee;
 
-public class OrganizationDataBase {
+public class OrganizationDataBase implements DatabaseAccess, DatabaseManipulation{
 	private static String url = "jdbc:mysql://localhost:3306/Organization";
 	private static String userName = "root";
 	private static String password = "";
@@ -45,6 +45,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
+	@Override
 	public void truncateTables() {
 	    try {
 	    	// Disable foreign key checks
@@ -63,7 +64,8 @@ public class OrganizationDataBase {
 	        se.printStackTrace();
 	    }
 	}
-
+	
+	@Override
 	public void addDepartmentData(String deptID, String deptName) {
 		try {
 			cstmt = conn.prepareCall("{CALL insert_department(?, ?)}");
@@ -76,6 +78,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
+	@Override
 	public Integer addEmployeeData(String empName, String deptID, float salary) {
 		try {
 			cstmt = conn.prepareCall("{CALL insert_employee(?, ?, ?)}");
@@ -102,6 +105,7 @@ public class OrganizationDataBase {
 		return -1;
 	}
 	
+	@Override
 	public Integer getEmployeeID(String empName) {
 	    query = "SELECT empID FROM Employee WHERE empName = ?";
 	    try {
@@ -118,6 +122,7 @@ public class OrganizationDataBase {
 	    return null;
 	}
 	
+	@Override
 	public List<Department> getAllDepartmentData() {
 		try {
 			query = "SELECT * FROM Department";
@@ -137,6 +142,7 @@ public class OrganizationDataBase {
 		return Collections.emptyList();
 	}
 	
+	@Override
 	public List<Employee> getAllEmployeeData(){
 		try {
 			query = "SELECT * FROM Employee";
@@ -157,6 +163,7 @@ public class OrganizationDataBase {
 		return Collections.emptyList();
 	}
 	
+	@Override
 	public boolean setHeadOfDepartment(String deptId, String headName) {
 		try {
 			query = "UPDATE Department SET deptHead = ? WHERE deptID = ?";
@@ -171,6 +178,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
+	@Override
 	public void updateEmployeeSalary(Integer empId, float salary) {
 		query = "UPDATE Employee SET salary = ? WHERE empID = ?";
 		try {
@@ -184,6 +192,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
+	@Override
 	public void updateEmployeeName(Integer empId, String newName) {
 		query = "UPDATE Employee SET empName = ? WHERE empID = ?";
 		try {
@@ -197,6 +206,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
+	@Override
 	public void departmentSalaryUpraisal(String deptId, float salaryUpgradePercentage) {
 	    query = "SELECT * FROM Employee WHERE deptID = ?";
 	    try {
@@ -215,7 +225,7 @@ public class OrganizationDataBase {
 	    }
 	}
 
-	
+	@Override
 	public boolean isEmployeeExists(String name) {
 	    try {
 	        query = "SELECT COUNT(*) FROM Employee WHERE empName = ?";
@@ -233,6 +243,7 @@ public class OrganizationDataBase {
 	    return false;
 	}
 	
+	@Override
 	public boolean isDepartmentExists(String deptId) {
 	    try {
 	        query = "SELECT COUNT(*) FROM Department WHERE deptID = ?";
@@ -250,6 +261,7 @@ public class OrganizationDataBase {
 	    return false;
 	}
 
+	@Override
 	public void closeResources() {
 		System.out.println("Closing all Resources...");
 		try {
@@ -273,6 +285,4 @@ public class OrganizationDataBase {
 			se.printStackTrace();
 		}
 	}
-	
-	
 }

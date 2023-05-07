@@ -10,7 +10,7 @@ import database.OrganizationDataBase;
 import exceptions.DepartmentNotFound;
 import exceptions.EmployeeNotFound;
 
-public class OrganizationTree {
+public class OrganizationTree implements OrganizationManagement{
 	private String topEmployee;
 	private Map<Integer, String> employeeMap; // empID mapped to empName
 	private Map<Integer, List<Integer>> managerMap; // managerID mapped to subordinateIDs
@@ -25,6 +25,7 @@ public class OrganizationTree {
 		managerMap = new HashMap<>();
 	}
 	
+	@Override
 	public void addEmployee(String name, String deptId, float salary) {
 		Employee emp = new Employee(name, deptId, salary);
 		emp.setEmpId(organizationDB.addEmployeeData(name, deptId, salary));
@@ -46,12 +47,13 @@ public class OrganizationTree {
 		});
 	}
 	
+	@Override
 	public void addDepartment(String deptId, String deptName) {
 		Department dept = new Department(deptId, deptName); // is this necessary
 		organizationDB.addDepartmentData(dept.getDeptId(), dept.getDeptName());
 	}
 	
-	
+	@Override
 	public void displayAllDepartmentData() {
 		System.out.println("DEPARTMENT DATA");
 		System.out.println("DEPARTMENT ID \t\tDEPARTMENT NAME \t\tHEAD OF DEPARTMENT\t\tNO OF EMPLOYEES");
@@ -71,6 +73,7 @@ public class OrganizationTree {
 		
 	}
 	
+	@Override
 	public void displayAllEmployeeData() {
 		System.out.println("EMPLOYEE DATA");
 		System.out.println("EMP ID\t\tEMP NAME\t\tDEPT ID\t\tSALARY\t\tMANAGER ID");
@@ -95,6 +98,7 @@ public class OrganizationTree {
 		}
 	}
 	
+	@Override
 	public void assignHeadOfDepartment(String deptId, String headName) {
 		//checking whether HOD is a registered emp or not
 		if(!organizationDB.isEmployeeExists(headName)) {
@@ -111,6 +115,7 @@ public class OrganizationTree {
 		}
 	}
 	
+	@Override
 	public void closeDatabase() {
 		organizationDB.closeResources();
 	}
@@ -138,6 +143,7 @@ public class OrganizationTree {
 		}
 	}
 	
+	@Override
 	public void departmentSalaryUpgrade(String deptId, float upgradePercentage) {
 		try {
 			if(!organizationDB.isDepartmentExists(deptId)) {
