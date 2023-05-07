@@ -2,15 +2,20 @@ package ui;
 
 import java.util.Scanner;
 
+import database.EmployeeColumn;
+import database.OrganizationDataBase;
 import organization.OrganizationTree;
 
 public class MainMenu {
 	private static OrganizationTree organizationTree = new OrganizationTree();
 	private static Scanner scanner = new Scanner(System.in);
+	private static EmployeeColumn empname = EmployeeColumn.EMPNAME;
+	private static EmployeeColumn salary = EmployeeColumn.SALARY;
+
 	public static void main(String[] args) {
 		//new OrganizationDataBase();
 		int choice = 0;
-		while(choice != 6) {
+		while(choice != 7) {
 			displayMenu();
 			System.out.print("Enter your choice: ");
 			choice = scanner.nextInt();
@@ -20,18 +25,21 @@ public class MainMenu {
 					addEmployee();
 					break;
 				case 2:
-					displayEmployeeDetails();
+					editEmployeeData();
 					break;
 				case 3:
-					createDepartment();
+					displayAllEmployeeDetails();
 					break;
 				case 4:
-					displayDepartmentDetails();
+					createDepartment();
 					break;
 				case 5:
-					assignHOD();
+					displayAllDepartmentDetails();
 					break;
 				case 6:
+					assignHOD();
+					break;
+				case 7:
 					organizationTree.closeDatabase();
 					System.out.println("Exiting Application...");
 					break;
@@ -49,11 +57,14 @@ public class MainMenu {
 		System.out.println("MENU");
 		System.out.println("================");
 		System.out.println("1. Add Employee");
-		System.out.println("2. Display EmployeeDetails");
-		System.out.println("3. Create New Department");
-		System.out.println("4. Display Department Details");
-		System.out.println("5. Assign Head Of Department");
-		System.out.println("6. Exit");
+		System.out.println("2. Edit Employee Data");
+		System.out.println("3. Display All Employee Details");
+		System.out.println("4. Create New Department");
+		System.out.println("5. Display All Department Details");
+		System.out.println("6. Assign Head Of Department");
+		System.out.println("7. Exit");
+		System.out.println("");
+		
 	}
 	
 	public static void addEmployee() {
@@ -77,12 +88,12 @@ public class MainMenu {
 		organizationTree.addDepartment(deptID, deptName);
 	}
 	
-	public static void displayDepartmentDetails() {
-		organizationTree.displayDepartmentData();
+	public static void displayAllDepartmentDetails() {
+		organizationTree.displayAllDepartmentData();
 	}
 	
-	public static void displayEmployeeDetails() {
-		organizationTree.displayEmployeeData();
+	public static void displayAllEmployeeDetails() {
+		organizationTree.displayAllEmployeeData();
 	}
 	
 	public static void assignHOD() {
@@ -92,5 +103,22 @@ public class MainMenu {
 		System.out.print("Enter HOD name: ");
 		String headName = scanner.nextLine();
 		organizationTree.assignHeadOfDepartment(deptId, headName);
+	}
+	
+	public static void editEmployeeData() {
+		System.out.print("Emp ID: ");
+		Integer empID = scanner.nextInt();
+		System.out.print("ColumnName(ename/esalary): ");
+		String column = scanner.next();
+		if(column.equalsIgnoreCase("ename")) {
+			organizationTree.modifyEmployeeData(empID, empname);
+		}
+		else if(column.equalsIgnoreCase("esalary")) {
+			organizationTree.modifyEmployeeData(empID, salary);
+		}
+		else {
+			System.err.println("Invalid Employee Data Field...");
+			System.err.println("TRY AGAIN...");
+		}
 	}
 }

@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 import exceptions.DepartmentNotFound;
 import organization.Department;
@@ -20,6 +21,8 @@ public class OrganizationDataBase {
 	private static Connection conn = null;
 	private static Statement stmt = null;
 	private static ResultSet res = null;
+	
+	private static Scanner scanner = new Scanner(System.in);
 	
 	static {
 		try {
@@ -76,7 +79,7 @@ public class OrganizationDataBase {
 		}
 	}
 	
-	public static void addEmployeeData(String empName, String deptID, float salary) {
+	public static Integer addEmployeeData(String empName, String deptID, float salary) {
 		try {
 			cstmt = conn.prepareCall("{CALL insert_employee(?, ?, ?)}");
 			cstmt.setString(1, empName);
@@ -88,16 +91,37 @@ public class OrganizationDataBase {
 				throw new DepartmentNotFound();
 			}
 			System.out.println("New Employee Added to Employee Table...");
-			
+			return getEmployeeID(empName);
 		}catch (DepartmentNotFound de) {
 			System.err.println(de.getMessage());
+//			de.printStackTrace();
+//			System.out.println("EXCEPTION IN addEmployeeData");
 		}
 		catch (SQLException se) {
 			System.err.println(se.getMessage());
+//			se.printStackTrace();
+//			System.out.println("EXCEPTION IN addEmployeeData");
 		}
+		return -1;
 	}
 	
-	public static List<Department> getDepartmentData() {
+	public static Integer getEmployeeID(String empName) {
+	    query = "SELECT empID FROM Employee WHERE empName = ?";
+	    try {
+	        pstmt = conn.prepareStatement(query);
+	        pstmt.setString(1, empName);
+	        ResultSet res = pstmt.executeQuery();
+	        if(res.next()) {
+	            return res.getInt(1);
+	        }
+	    } catch (SQLException se) {
+	        se.printStackTrace();
+	        System.out.println("EXCEPTION IN getEmployeeID");
+	    }
+	    return null;
+	}
+	
+	public static List<Department> getAllDepartmentData() {
 		try {
 			query = "SELECT * FROM Department";
 			res = stmt.executeQuery(query);
@@ -116,7 +140,7 @@ public class OrganizationDataBase {
 		return Collections.emptyList();
 	}
 	
-	public static List<Employee> getEmployeeData(){
+	public static List<Employee> getAllEmployeeData(){
 		try {
 			query = "SELECT * FROM Employee";
 			res = stmt.executeQuery(query);
@@ -150,6 +174,32 @@ public class OrganizationDataBase {
 		}
 	}
 	
+	public static void updateEmployeeSalary(Integer empId, float salary) {
+		query = "UPDATE Employee SET salary = ? WHERE empID = ?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setFloat(1, salary);
+			pstmt.setInt(2, empId);
+			pstmt.executeUpdate();
+			System.out.println("Successfully Updated Employee Salary to " + salary);
+		}catch (SQLException se) {
+			se.printStackTrace();
+		}
+	}
+	
+	public static void updateEmployeeName(Integer empId, String newName) {
+		query = "UPDATE Employee SET empName = ? WHERE empID = ?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, newName);
+			pstmt.setInt(2, empId);
+			pstmt.executeUpdate();
+			System.out.println("Successfully Updated Employee Name to " + newName);
+		} catch (SQLException se) {
+			se.printStackTrace();
+		}
+	}
+	
 	public static boolean isEmployeeExists(String name) {
 	    try {
 	        query = "SELECT COUNT(*) FROM Employee WHERE empName = ?";
@@ -161,6 +211,7 @@ public class OrganizationDataBase {
 	            return count > 0;
 	        }
 	    } catch (SQLException se) {
+//	    	System.out.println("EXCEPTION IN isEmployeeExists");
 	        System.out.println(se.getMessage());
 	    }
 	    return false;

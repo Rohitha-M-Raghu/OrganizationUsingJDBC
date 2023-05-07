@@ -3,26 +3,47 @@ package organization;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
+import database.EmployeeColumn;
 import database.OrganizationDataBase;
 import exceptions.DepartmentNotFound;
+import exceptions.EmployeeNotFound;
 
 public class OrganizationTree {
 	private String topEmployee;
-	private Map<Integer, String> employee;
-	private Map<Integer, List<Integer>> manager;
+	private Map<Integer, String> employeeMap; // empID mapped to empName
+	private Map<Integer, List<Integer>> managerMap; // managerID mapped to subordinateIDs
 	//private OrganizationDataBase organizationDB = new OrganizationDataBase();
 	
+	private static Scanner scanner = new Scanner(System.in);
+		
 	public OrganizationTree() {
 		new OrganizationDataBase();
 		topEmployee = "noname";
-		employee = new HashMap<>();
-		manager = new HashMap<>();
+		employeeMap = new HashMap<>();
+		managerMap = new HashMap<>();
 	}
 	
 	public void addEmployee(String name, String deptId, float salary) {
 		Employee emp = new Employee(name, deptId, salary);
-		OrganizationDataBase.addEmployeeData(name, deptId, salary);
+		emp.setEmpId(OrganizationDataBase.addEmployeeData(name, deptId, salary));
+		if(emp.getEmpId()!= null) {
+			if(topEmployee.equals("noname")) {
+				topEmployee = name;
+			}
+			employeeMap.put(emp.getEmpId(), name);
+		}
+		displayEmployeeMap(); //remove
+	}
+	
+	//checking function
+	public void displayEmployeeMap() {
+		System.out.println("EMPID\t\tEMPNAME");
+		System.out.println("------------------------");
+		employeeMap.forEach((empID, empName) ->{
+			System.out.println(empID + "\t\t" + empName);
+		});
 	}
 	
 	public void addDepartment(String deptId, String deptName) {
@@ -31,12 +52,12 @@ public class OrganizationTree {
 	}
 	
 	
-	public void displayDepartmentData() {
+	public void displayAllDepartmentData() {
 		System.out.println("DEPARTMENT DATA");
 		System.out.println("DEPARTMENT ID \t\tDEPARTMENT NAME \t\tHEAD OF DEPARTMENT\t\tNO OF EMPLOYEES");
 		System.out.print("----------------------------------------------------");
 		System.out.println("---------------------------------------------------");
-		List<Department> departmentData = OrganizationDataBase.getDepartmentData();
+		List<Department> departmentData = OrganizationDataBase.getAllDepartmentData();
 		if(departmentData.isEmpty()) {
 			System.err.println("Empty Data Set.....");
 			return;
@@ -50,12 +71,12 @@ public class OrganizationTree {
 		
 	}
 	
-	public void displayEmployeeData() {
+	public void displayAllEmployeeData() {
 		System.out.println("EMPLOYEE DATA");
 		System.out.println("EMP ID\t\tEMP NAME\t\tDEPT ID\t\tSALARY\t\tMANAGER ID");
 		System.out.print("---------------------------------------------");
 		System.out.println("-------------------------------------");
-		List<Employee> employeeData = OrganizationDataBase.getEmployeeData();
+		List<Employee> employeeData = OrganizationDataBase.getAllEmployeeData();
 		if(employeeData.isEmpty()) {
 			System.err.println("Emplty Data Set.....");
 			return;
@@ -92,6 +113,29 @@ public class OrganizationTree {
 	
 	public void closeDatabase() {
 		OrganizationDataBase.closeResources();
+	}
+	
+	public void modifyEmployeeData(Integer empId, EmployeeColumn columnName) {
+		try {
+			if(!employeeMap.containsKey(empId)) {
+				throw new EmployeeNotFound(empId);
+			}
+			else {
+				if(columnName.equals(EmployeeColumn.EMPNAME)) {
+					System.out.print("Enter Employee Name(for updation): ");
+					String name = scanner.nextLine();
+					OrganizationDataBase.updateEmployeeName(empId, name);
+					employeeMap.put(empId, name);
+				}
+				else {
+					System.out.print("Enter new Salary: ");
+					float salary = scanner.nextFloat();
+					OrganizationDataBase.updateEmployeeSalary(empId, salary);
+				}
+			}
+		}catch (EmployeeNotFound e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 }
