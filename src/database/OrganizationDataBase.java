@@ -65,12 +65,11 @@ public class OrganizationDataBase implements DatabaseAccess, DatabaseManipulatio
 	    }
 	}
 	
-	@Override
-	public void addDepartmentData(String deptID, String deptName) {
+	public void addDepartmentData(Department dept) {
 		try {
 			cstmt = conn.prepareCall("{CALL insert_department(?, ?)}");
-			cstmt.setString(1, deptID);
-			cstmt.setString(2, deptName);
+			cstmt.setString(1, dept.getDeptId());
+			cstmt.setString(2, dept.getDeptName());
 			cstmt.executeUpdate();
 			System.out.println("New Department Added to Department Table...");
 		}catch (SQLException se) {
@@ -78,20 +77,19 @@ public class OrganizationDataBase implements DatabaseAccess, DatabaseManipulatio
 		}
 	}
 	
-	@Override
-	public Integer addEmployeeData(String empName, String deptID, float salary) {
+	public Integer addEmployeeData(Employee emp) {
 		try {
 			cstmt = conn.prepareCall("{CALL insert_employee(?, ?, ?)}");
-			cstmt.setString(1, empName);
-			cstmt.setString(2, deptID);
-			cstmt.setFloat(3, salary);
+			cstmt.setString(1, emp.getEmpName());
+			cstmt.setString(2, emp.getDeptId());
+			cstmt.setFloat(3, emp.getSalary());
 			try {
 				cstmt.executeUpdate();
 			}catch (SQLException e) {
 				throw new DepartmentNotFound();
 			}
 			System.out.println("New Employee Added to Employee Table...");
-			return getEmployeeID(empName);
+			return getEmployeeID(emp.getEmpName());
 		}catch (DepartmentNotFound de) {
 			System.err.println(de.getMessage());
 //			de.printStackTrace();
@@ -103,6 +101,27 @@ public class OrganizationDataBase implements DatabaseAccess, DatabaseManipulatio
 //			System.out.println("EXCEPTION IN addEmployeeData");
 		}
 		return -1;
+	}
+	
+	public Employee getEmployeeData(Integer empID) {
+		query = "SELECT * FROM Employee WHERE empID = ?";
+		Employee emp = new Employee();
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, empID);
+			res = pstmt.executeQuery();
+			if(res.next()) {
+				emp.setEmpId(res.getInt("empID"));
+				emp.setEmpName(res.getString("empName"));
+				emp.setDeptId(res.getString("deptID"));
+				emp.setSalary(res.getFloat("salary"));
+				emp.setManagerId(res.getInt("managerID"));
+			}
+			return emp;
+		}catch (SQLException se) {
+			se.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override

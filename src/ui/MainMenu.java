@@ -15,7 +15,7 @@ public class MainMenu {
 	public static void main(String[] args) {
 		//new OrganizationDataBase();
 		int choice = 0;
-		while(choice != 8) {
+		while(choice != 9) {
 			displayMenu();
 			System.out.print("Enter your choice: ");
 			choice = scanner.nextInt();
@@ -28,21 +28,24 @@ public class MainMenu {
 					editEmployeeData();
 					break;
 				case 3:
-					displayAllEmployeeDetails();
+					findEmployeeData();
 					break;
 				case 4:
-					createDepartment();
+					displayAllEmployeeDetails();
 					break;
 				case 5:
-					displayAllDepartmentDetails();
+					createDepartment();
 					break;
 				case 6:
-					assignHOD();
+					displayAllDepartmentDetails();
 					break;
 				case 7:
-					salaryUpraisal();
+					assignHOD();
 					break;
 				case 8:
+					salaryUpraisal();
+					break;
+				case 9:
 					organizationTree.closeDatabase();
 					System.out.println("Exiting Application...");
 					break;
@@ -61,12 +64,13 @@ public class MainMenu {
 		System.out.println("================");
 		System.out.println("1. Add Employee");
 		System.out.println("2. Edit Employee Data");
-		System.out.println("3. Display All Employee Details");
-		System.out.println("4. Create New Department");
-		System.out.println("5. Display All Department Details");
-		System.out.println("6. Assign Head Of Department");
-		System.out.println("7. Salary Upraisal for Department");
-		System.out.println("8. Exit");
+		System.out.println("3. Display Employee Data");
+		System.out.println("4. Display All Employee Details");
+		System.out.println("5. Create New Department");
+		System.out.println("6. Display All Department Details");
+		System.out.println("7. Assign Head Of Department");
+		System.out.println("8. Salary Upraisal for Department");
+		System.out.println("9. Exit");
 		System.out.println("");
 		
 	}
@@ -96,6 +100,12 @@ public class MainMenu {
 	
 	public static void displayAllDepartmentDetails() {
 		organizationTree.displayAllDepartmentData();
+	}
+	
+	public static void findEmployeeData() {
+		System.out.print("Enter employee ID : ");
+		int empSearch = scanner.nextInt();
+		organizationTree.findEmployeeData(empSearch);
 	}
 	
 	public static void displayAllEmployeeDetails() {

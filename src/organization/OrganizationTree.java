@@ -14,7 +14,6 @@ public class OrganizationTree implements OrganizationManagement{
 	private String topEmployee;
 	private Map<Integer, String> employeeMap; // empID mapped to empName
 	private Map<Integer, List<Integer>> managerMap; // managerID mapped to subordinateIDs
-	//private OrganizationDataBase organizationDB = new OrganizationDataBase();
 	private OrganizationDataBase organizationDB;
 	private static Scanner scanner = new Scanner(System.in);
 		
@@ -28,7 +27,7 @@ public class OrganizationTree implements OrganizationManagement{
 	@Override
 	public void addEmployee(String name, String deptId, float salary) {
 		Employee emp = new Employee(name, deptId, salary);
-		emp.setEmpId(organizationDB.addEmployeeData(name, deptId, salary));
+		emp.setEmpId(organizationDB.addEmployeeData(emp));
 		if(emp.getEmpId()!= null) {
 			if(topEmployee.equals("noname")) {
 				topEmployee = name;
@@ -50,7 +49,41 @@ public class OrganizationTree implements OrganizationManagement{
 	@Override
 	public void addDepartment(String deptId, String deptName) {
 		Department dept = new Department(deptId, deptName); // is this necessary
-		organizationDB.addDepartmentData(dept.getDeptId(), dept.getDeptName());
+		organizationDB.addDepartmentData(dept);
+	}
+	
+	@Override
+	public void findEmployeeData(int empId) {
+		Employee emp;
+		emp = organizationDB.getEmployeeData(empId);
+		try {
+			if(emp == null) {
+				throw new EmployeeNotFound();
+			}
+			else {
+				System.out.println("Employee Data");
+				System.out.println("-------------------");
+				System.out.println("Emp ID: " + emp.getEmpId());
+				System.out.println("Emp Name: " + emp.getEmpName());
+				System.out.print("Dept ID: ");
+				if(emp.getDeptId() == null) {
+					System.out.println("Not assigned");
+				}
+				else {
+					System.out.println(emp.getDeptId());
+				}
+				System.out.println("Salary: " + emp.getSalary());
+				System.out.print("Manager ID: ");
+				if(emp.getManagerId() == 0) {
+					System.out.println("Not assigned");
+				}
+				else {
+					System.out.println(emp.getManagerId());
+				}
+			}
+		}catch (EmployeeNotFound e) {
+			e.printStackTrace();
+		}	
 	}
 	
 	@Override
@@ -161,5 +194,6 @@ public class OrganizationTree implements OrganizationManagement{
 	public boolean checkValidDeptID(String deptId) {
 		return organizationDB.isDepartmentExists(deptId);
 	}
+
 	
 }

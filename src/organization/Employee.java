@@ -12,6 +12,10 @@ public class Employee {
 	private List<Integer> subordinatesId;
 	private Integer managerId;
 	
+	public Employee() {
+		//default constructor
+	}
+	
 	public Employee(String name, String deptId, float salary) {
 		noOfEmployees ++;
 		empId = noOfEmployees;
