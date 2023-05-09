@@ -57,32 +57,30 @@ public class OrganizationTree implements OrganizationManagement{
 		Employee emp;
 		emp = organizationDB.getEmployeeData(empId);
 		try {
-			if(emp == null) {
+			if(!employeeMap.containsKey(empId)) {
 				throw new EmployeeNotFound();
 			}
+			System.out.println("Employee Data");
+			System.out.println("-------------------");
+			System.out.println("Emp ID: " + emp.getEmpId());
+			System.out.println("Emp Name: " + emp.getEmpName());
+			System.out.print("Dept ID: ");
+			if(emp.getDeptId() == null) {
+				System.out.println("Not assigned");
+			}
 			else {
-				System.out.println("Employee Data");
-				System.out.println("-------------------");
-				System.out.println("Emp ID: " + emp.getEmpId());
-				System.out.println("Emp Name: " + emp.getEmpName());
-				System.out.print("Dept ID: ");
-				if(emp.getDeptId() == null) {
-					System.out.println("Not assigned");
-				}
-				else {
-					System.out.println(emp.getDeptId());
-				}
-				System.out.println("Salary: " + emp.getSalary());
-				System.out.print("Manager ID: ");
-				if(emp.getManagerId() == 0) {
-					System.out.println("Not assigned");
-				}
-				else {
-					System.out.println(emp.getManagerId());
-				}
+				System.out.println(emp.getDeptId());
+			}
+			System.out.println("Salary: " + emp.getSalary());
+			System.out.print("Manager ID: ");
+			if(emp.getManagerId() == 0) {
+				System.out.println("Not assigned");
+			}
+			else {
+				System.out.println(emp.getManagerId());
 			}
 		}catch (EmployeeNotFound e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}	
 	}
 	
