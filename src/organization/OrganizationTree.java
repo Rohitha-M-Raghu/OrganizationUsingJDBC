@@ -189,6 +189,17 @@ public class OrganizationTree implements OrganizationManagement{
 		
 	}
 	
+	@Override
+	public void deleteEmployee(int empId) {
+		int isDeleted = organizationDB.deleteEmployeeData(empId);
+		if(isDeleted == 1) {
+			System.out.println("Deleted Employee Data Successfully...");
+		}
+		else {
+			System.out.println("Deletion of Employee Data Unsuccessful...");
+		}
+	}
+	
 	public boolean checkValidDeptID(String deptId) {
 		return organizationDB.isDepartmentExists(deptId);
 	}

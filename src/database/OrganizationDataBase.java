@@ -279,6 +279,21 @@ public class OrganizationDataBase implements DatabaseAccess, DatabaseManipulatio
 	    }
 	    return false;
 	}
+	
+	@Override
+	public int deleteEmployeeData(int empId) {
+		query = "DELETE FROM Employee WHERE empID = ?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, empId);
+			return pstmt.executeUpdate();
+			
+		}catch (SQLException se) {
+			System.err.println(se.getMessage());
+			System.err.println("TRY AGAIN...");
+		}
+		return 0;
+	}
 
 	@Override
 	public void closeResources() {

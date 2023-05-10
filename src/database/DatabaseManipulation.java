@@ -11,5 +11,5 @@ public interface DatabaseManipulation {
 	public void updateEmployeeSalary(Integer empId, float salary);
 	public void updateEmployeeName(Integer empId, String newName);
 	public void departmentSalaryUpraisal(String deptId, float salaryUpgradePercentage);
-	
+	public int deleteEmployeeData(int empId);
 }

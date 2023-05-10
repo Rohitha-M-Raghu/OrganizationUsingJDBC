@@ -9,4 +9,5 @@ public interface OrganizationManagement {
 	public void closeDatabase();
 	public void departmentSalaryUpgrade(String deptId, float upgradePercentage);
 	public void findEmployeeData(int empId);
+	public void deleteEmployee(int empId);
 }

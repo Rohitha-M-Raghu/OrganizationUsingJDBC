@@ -15,7 +15,7 @@ public class MainMenu {
 	public static void main(String[] args) {
 		//new OrganizationDataBase();
 		int choice = 0;
-		while(choice != 9) {
+		while(choice != 10) {
 			displayMenu();
 			System.out.print("Enter your choice: ");
 			choice = scanner.nextInt();
@@ -46,6 +46,9 @@ public class MainMenu {
 					salaryUpraisal();
 					break;
 				case 9:
+					fireEmployee();
+					break;
+				case 10:
 					organizationTree.closeDatabase();
 					System.out.println("Exiting Application...");
 					break;
@@ -70,7 +73,8 @@ public class MainMenu {
 		System.out.println("6. Display All Department Details");
 		System.out.println("7. Assign Head Of Department");
 		System.out.println("8. Salary Upraisal for Department");
-		System.out.println("9. Exit");
+		System.out.println("9. Fire Employee");
+		System.out.println("10. Exit");
 		System.out.println("");
 		
 	}
@@ -144,5 +148,11 @@ public class MainMenu {
 		System.out.print("Enter Percentage Upraisal(in %): ");
 		float upgradePercentage = scanner.nextFloat();
 		organizationTree.departmentSalaryUpgrade(deptId, upgradePercentage);
+	}
+	
+	public static void fireEmployee() {
+		System.out.print("Enter empID: ");
+		int empId = scanner.nextInt();
+		organizationTree.deleteEmployee(empId);
 	}
 }
